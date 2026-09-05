@@ -1,5 +1,5 @@
 # all operations of database that will be used by the app
-from db.init_db import open_db
+from .init_db import open_db
 
 
 # ----auth operation----
@@ -17,7 +17,7 @@ def get_user_by_email(email):
 def insert_user_into_db(name, email , password_hash, phone, role):
     db = open_db()
     cursor = db.cursor(dictionary=True)
-    query = 'insert into user(name , email, password_hash, phone_number, role) values (%s, %s, %s , %s, %s)'
+    query = 'insert into users(name , email, password_hash, phone_number, role) values (%s, %s, %s , %s, %s)'
     cursor.execute(query, (name , email , password_hash, phone, role))
     db.commit()
     cursor.close()
