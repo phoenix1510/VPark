@@ -9,8 +9,8 @@ def create_app():
     app.config.from_object('app.config.config.Config')
 
     #register blueprints
-    # from app.routes. import 
-    # app.register_blueprint(auth_bp)
+    from app.routes.auth import auth_bp
+    app.register_blueprint(auth_bp)
 
     #register db teardown
     from app.db.init_db import close_db
