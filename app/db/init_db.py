@@ -1,5 +1,6 @@
-import mysql.connector
-from flask import g,current_app
+import mysql.connector             # --> db specific connector api
+from flask import g,current_app    # --> g is temporary storage for a request and current_app is reference of Flask object (app)
+
 
 def open_db():
     if 'db' not in g:
