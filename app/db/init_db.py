@@ -5,10 +5,10 @@ from flask import g,current_app    # --> g is temporary storage for a request an
 def open_db():
     if 'db' not in g:
         g.db = mysql.connector.connect(
-            host= current_app['MYSQL_HOST'], 
-            user= current_app['MYSQL_USER'], 
-            password= current_app['MYSQL_PASSWORD'],
-            database= current_app['MYSQL_DATABASE']
+            host= current_app.config['MYSQL_HOST'], 
+            user= current_app.config['MYSQL_USER'], 
+            password= current_app.config['MYSQL_PASSWORD'],
+            database= current_app.config['MYSQL_DATABASE']
         )
     return g.db
 
