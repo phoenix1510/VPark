@@ -20,7 +20,7 @@ def login():
             session['user_id'] = user['user_id']
             session['role'] = user['role']
             flash('Successfully logged in!','success')
-            return redirect(url_for('main.user_dashboard'))
+            return redirect(url_for('user.user_dashboard'))
         else:
             flash('Incorrect username/password','danger')
 
@@ -56,7 +56,7 @@ def signup():
             return redirect(url_for('auth.login'))
     return render_template('signup.html',form=form)
         
-@auth_bp.route('/login/admin')
+@auth_bp.route('/login/admin',methods=['GET','POST'])
 def admin_login():
     form = LoginForm()
     if form.validate_on_submit():
@@ -71,12 +71,12 @@ def admin_login():
                 session['user_id'] = user['user_id']
                 session['role'] = user['role']
                 flash('Successfully logged in!','success')
-                return redirect(url_for('main.admin_dashboard'))
+                return redirect(url_for('admin.admin_dashboard'))
             else:
                 flash('Not an admin!!','danger')
         else:
             flash('Username/Password is incorrect!', 'danger')
-    return render_template('login.html',form=form)
+    return render_template('admin_login.html',form=form)
 
 
 def auth_required(f):
@@ -98,6 +98,6 @@ def admin_required(f):
 
         if session.get('role') != 'admin':
             flash('Admin access required.', 'danger')
-            return redirect(url_for('main.user_dashboard'))
+            return redirect(url_for('user.user_dashboard'))
         return f(*args, **kwargs)
     return decorated_function
