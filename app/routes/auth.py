@@ -34,7 +34,7 @@ def logout():
         session.pop('user_id',None)
         session.pop('role',None)
         flash("Successfully logged out!",'success')
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('main.home'))
 
 
 @auth_bp.route('/signup',methods=['GET','POST'])
@@ -84,7 +84,7 @@ def auth_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please log in first.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('main.home'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -94,7 +94,7 @@ def admin_required(f):
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
             flash('Please log in first.', 'danger')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('main.home'))
 
         if session.get('role') != 'admin':
             flash('Admin access required.', 'danger')
