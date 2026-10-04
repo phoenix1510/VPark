@@ -7,12 +7,11 @@ from app.db.db_operations import (
     remove_slot, change_slot_status, get_floor_by_id,
     add_parking_rate, fetch_rates_for_facility, remove_parking_rate
 )
-from .wtfforms import (Add_Fal_Form, Add_Flo_Form, Remove_Flo_Form, Remove_fal_Form,
+from .wtfforms import (Add_Fal_Form, Add_Flo_Form, Remove_Flo_Form, Remove_admin_Form, Remove_fal_Form,
                        Edit_fal_Form, Add_slo_Form, Remove_slo_Form, Edit_status_Form,
                        Add_Rate_Form, Remove_Rate_Form)
 
 admin_bp = Blueprint('admin',__name__,url_prefix='/admin')
-
 
 
 # profile route endpoints
@@ -22,16 +21,19 @@ admin_bp = Blueprint('admin',__name__,url_prefix='/admin')
 def Profile():
     user_id = session.get('user_id')
     user = get_user_by_id(user_id)
-    return render_template('admin_profile.html', current_user = user)
+    remove_admin_form = Remove_admin_Form()
+    return render_template('admin_profile.html', current_user = user, remove_admin_form = remove_admin_form)
 
 
 @admin_bp.route('/profile/delete_admin', methods = ['GET','POST'])
 @admin_required
 def Remove_admin():
-    user_id = session.get('user_id')
-    delete_admin(user_id)
-    flash('Admin deleted!','success')
-    return redirect(url_for('auth.logout'))
+    remove_admin_form = Remove_admin_Form()
+    if remove_admin_form.validate_on_submit():
+        user_id = session.get('user_id')
+        delete_admin(user_id)
+        flash('Admin deleted!','success')
+        return redirect(url_for('auth.logout'))
 
 # dashboard route endpoints
 
