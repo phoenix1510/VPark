@@ -20,6 +20,8 @@ class SignupForm(FlaskForm):
 
 # -- admin forms -- 
 
+class Remove_admin_Form(FlaskForm):
+    submit = SubmitField('Remove Admin')
 class Add_Fal_Form(FlaskForm):
     name = StringField('Facility Name', validators=[DataRequired()])
     address = TextAreaField('Address', validators=[DataRequired(),Length(min=10 , max=500)])
@@ -58,7 +60,30 @@ class Add_Rate_Form(FlaskForm):
     vehicle_type = StringField('Vehicle Type', validators=[DataRequired(), Length(max=50)])
     rate_per_hour = IntegerField('Rate per Hour (₹)', validators=[DataRequired()])
     submit = SubmitField('Add Rate')
-
 class Remove_Rate_Form(FlaskForm):
     rate_id = HiddenField('rate_id', validators=[InputRequired()])
     submit = SubmitField('Remove')
+
+
+# -- user forms --
+
+class Remove_user_Form(FlaskForm):
+    submit = SubmitField('Remove User')
+
+class Add_vehicle_Form(FlaskForm):
+    vehicle_name = StringField('Vehicle Name', validators=[DataRequired()])
+    registration = StringField('Registration Number', validators=[DataRequired()])
+    vehicle_type = StringField('Vehicle Type', validators=[DataRequired()])
+    submit = SubmitField('Add Vehicle')
+class Remove_vehicle_Form(FlaskForm):
+    vehicle_id = HiddenField('vehicle_id', validators=[InputRequired()])
+    submit = SubmitField('Remove Vehicle')
+class Start_parking_Form(FlaskForm):
+    facility_id = HiddenField('facility_id', validators=[InputRequired()])
+    vehicle_id = HiddenField('vehicle_id', validators=[InputRequired()])
+    slot_id = HiddenField('slot_id', validators=[InputRequired()])
+    submit = SubmitField('Start Parking')
+
+class Finish_parking_Form(FlaskForm):
+    session_id = HiddenField('session_id', validators=[InputRequired()])
+    submit = SubmitField('Finish Parking')
