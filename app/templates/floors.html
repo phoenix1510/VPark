@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — Floors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-badge">P</div>
+            <div class="brand-word">VPARK</div>
+        </div>
+        <div class="admin-tag">Admin — {{ current_user if current_user is defined else "" }}</div>
+    </header>
+
+    <main data-facility-id="{{ facility.facility_id }}">
+        <div class="page-head">
+            <div>
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="back-link">&larr; Back to Facilities</a>
+                <p class="kicker">{{ facility.facility_name if facility is defined else "Facility" }}</p>
+                <h1>Floors</h1>
+                <p>Select a floor to view its slots, or remove it from this facility.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="select-col"></th>
+                        <th>Floor Number</th>
+                    </tr>
+                </thead>
+                <tbody id="floor-body">
+                    {% for floor in floors %}
+                    <tr data-floor-id="{{ floor.floor_id }}">
+                        <td>
+                            <input type="checkbox" class="row-select" name="floor_select"
+                                value="{{ floor.floor_id }}">
+                        </td>
+                        <td>
+                            <div class="facility-name">Floor {{ floor.floor_number }}</div>
+                            <div class="facility-sub">ID #{{ floor.floor_id }}</div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr class="empty-row">
+                        <td colspan="2">No floors yet — add the first one below.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="action-bar">
+            <a href="#" class="action-btn view needs-selection is-disabled" id="btn-view-slots">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <path d="M3 9h18M9 21V9"></path>
+                </svg>
+                View Slots
+            </a>
+            <button type="button" class="action-btn primary" id="btn-add-floor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add Floor
+            </button>
+            <a href="{{ url_for('admin.Remove_floor', facility_id=facility.facility_id) }}"
+                class="action-btn remove needs-selection is-disabled" id="btn-remove-floor">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                </svg>
+                Remove Floor
+            </a>
+        </div>
+
+        <p class="hint">Check one floor above to enable <b>View Slots</b> or <b>Remove Floor</b>.</p>
+    </main>
+
+    <!-- Hidden form used by Remove Floor, backed by Remove_Flo_Form (gives us csrf_token) -->
+    <form id="remove-floor-form" action="{{ url_for('admin.Remove_floor', facility_id=facility.facility_id) }}"
+        method="POST" style="display:none;">
+        {{ remove_flo_form.csrf_token }}
+        {{ remove_flo_form.floor_id(id="remove-floor-floor-id") }}
+    </form>
+
+    <!-- Add floor modal, backed by Add_Flo_Form -->
+    <div class="modal-backdrop" id="add-floor-backdrop">
+        <div class="modal">
+            <h2>Add Floor</h2>
+            <form action="{{ url_for('admin.Add_floor', facility_id=facility.facility_id) }}" method="POST">
+                {{ add_flo_form.hidden_tag() }}
+
+                {{ add_flo_form.floor_number.label }}
+                {{ add_flo_form.floor_number(id="add-floor-number") }}
+                {% if add_flo_form.floor_number.errors %}
+                <ul class="field-errors">
+                    {% for error in add_flo_form.floor_number.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-cancel-add-floor">Cancel</button>
+                    {{ add_flo_form.submit(class_="action-btn primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static',filename = 'js/floors.js') }}"></script>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category,message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

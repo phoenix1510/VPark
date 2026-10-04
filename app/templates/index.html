@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/index_style.css')}}">
+</head>
+
+<body>
+    <header>
+        <div class="mark">
+            <div class="mark-badge">P</div>
+            <div class="mark-word">VPARK</div>
+        </div>
+    </header>
+
+    <main>
+        <p class="kicker">Parking management, without the hunt</p>
+        <h1>Know your spot <em>before</em> you arrive.</h1>
+        <p class="lede">VPark tracks every slot across the facility in real time and hands drivers an easily available
+            parking spot — no circling required.</p>
+
+        <div class="gate-row">
+            <a class="ticket user" href="{{ url_for('auth.login') }}">
+                <div class="ticket-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"></circle>
+                        <path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"></path>
+                    </svg>
+                </div>
+                <div class="ticket-title">User Login</div>
+                <div class="ticket-sub">Find a slot, check in, and manage your parking sessions.</div>
+                <div class="ticket-go">Enter as driver
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                    </svg>
+                </div>
+            </a>
+
+            <a class="ticket admin" href="{{ url_for('auth.admin_login') }}">
+                <div class="ticket-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"></path>
+                    </svg>
+                </div>
+                <div class="ticket-title">Admin Login</div>
+                <div class="ticket-sub">Oversee facility , manage slot status , add more floors or slots.</div>
+                <div class="ticket-go">Enter as admin
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 VPark. All rights reserved
+    </footer>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

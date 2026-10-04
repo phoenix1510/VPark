@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — Find Parking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user_parking.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <a href="{{ url_for('user.user_dashboard') }}" class="brand-link">
+                <div class="brand-badge">P</div>
+                <div class="brand-word">VPARK</div>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="profile-menu" id="profile-menu">
+                <button type="button" class="profile-btn" id="profile-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="{{ url_for('user.User_profile') }}" class="dropdown-item">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="page-head">
+            <div>
+                <p class="kicker">Park</p>
+                <h1>Find a Facility</h1>
+                <p>Search for a parking facility and pick an available slot.</p>
+            </div>
+            <a href="{{ url_for('user.user_dashboard') }}" class="action-btn back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Dashboard
+            </a>
+        </div>
+
+        <!-- Search bar -->
+        <form class="search-bar" action="{{ url_for('user.Search_facility') }}" method="GET">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" name="search_id" class="search-input" placeholder="Search facility by name…"
+                value="{{ request.args.get('search_id', '') }}">
+            <button type="submit" class="action-btn primary">Search</button>
+        </form>
+
+        <!-- Facility cards -->
+        {% if facilities %}
+        <div class="facility-grid" id="facility-grid">
+            {% for f in facilities %}
+            <div class="facility-card" data-facility-id="{{ f.facility_id }}">
+                <div class="facility-card-head">
+                    <div>
+                        <div class="facility-card-name">{{ f.facility_name }}</div>
+                        <div class="facility-card-addr">{{ f.address }}</div>
+                    </div>
+                    <button type="button" class="action-btn primary btn-view-slots"
+                        data-facility-id="{{ f.facility_id }}"
+                        data-facility-name="{{ f.facility_name }}">
+                        View Slots
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No facilities found. Try a different search term.</p>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Slots + vehicle selection modal -->
+    <div class="modal-backdrop" id="slots-modal-backdrop">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h2 id="slots-modal-title">Slots</h2>
+                <button type="button" class="icon-btn" id="btn-close-slots-modal" aria-label="Close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Step 1: pick a slot -->
+            <div id="step-slots">
+                <p class="modal-sub">Select a vacant slot to park in.</p>
+                <div class="slots-grid" id="slots-grid">
+                    <!-- populated by JS -->
+                </div>
+                <div class="rates-section" id="rates-section">
+                    <p class="rates-heading">Rates at this facility</p>
+                    <div class="rates-list" id="rates-list"></div>
+                </div>
+                <p class="loading-msg" id="slots-loading">Loading slots…</p>
+            </div>
+
+            <!-- Step 2: pick a vehicle (shown after slot selected) -->
+            <div id="step-vehicle" class="hidden">
+                <div class="step-back-row">
+                    <button type="button" class="action-btn" id="btn-back-to-slots">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path>
+                        </svg>
+                        Back to Slots
+                    </button>
+                    <span class="selected-slot-label">Slot <strong id="selected-slot-display"></strong> selected</span>
+                </div>
+                <p class="modal-sub">Now choose which vehicle you are parking.</p>
+                <div class="vehicle-list" id="vehicle-list-modal">
+                    <!-- populated by JS from inline data -->
+                </div>
+                <form action="{{ url_for('user.Start_parking') }}" method="POST" id="start-parking-form">
+                    {{ start_parking_form.csrf_token() }}
+                    {{ start_parking_form.slot_id(id='form-slot-id') }}
+                    {{ start_parking_form.facility_id(id='form-facility-id') }}
+                    {{ start_parking_form.vehicle_id(id='form-vehicle-id') }}
+                    <div class="modal-actions">
+                        <button type="button" class="action-btn" id="btn-close-slots-modal-2">Cancel</button>
+                        <button type="submit" class="action-btn primary" id="btn-confirm-park" disabled>
+                            Start Parking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- User vehicles data JSON -->
+    <script id="user-vehicles-data" type="application/json">
+        {{ vehicles | tojson | safe }}
+    </script>
+    <script src="{{ url_for('static', filename='js/user_parking.js') }}"></script>
+</body>
+</html>

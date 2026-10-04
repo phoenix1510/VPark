@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-badge">P</div>
+            <div class="brand-word">VPARK</div>
+        </div>
+
+        <div class="header-right">
+            <div class="admin-tag">Admin — {{ current_user if current_user is defined else "" }}</div>
+
+            <div class="profile-menu" id="profile-menu">
+                <button type="button" class="profile-btn" id="profile-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="{{ url_for('admin.Profile') }}" class="dropdown-item">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-head">
+            <div>
+                <p class="kicker">Facility management</p>
+                <h1>Your Facilities</h1>
+                <p>Select a facility to view its floors, edit its details, or remove it from your account.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="select-col"></th>
+                        <th>Facility</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody id="facility-body">
+                    {% for facility in facilities %}
+                    <tr data-facility-id="{{ facility.facility_id }}">
+                        <td>
+                            <input type="checkbox" class="row-select" name="facility_select"
+                                value="{{ facility.facility_id }}">
+                        </td>
+                        <td>
+                            <div class="facility-name">{{ facility.facility_name }}</div>
+                            <div class="facility-sub">ID #{{ facility.facility_id }}</div>
+                        </td>
+                        <td>{{ facility.address }}</td>
+                    </tr>
+                    {% else %}
+                    <tr class="empty-row">
+                        <td colspan="3">No facilities yet — add your first one below.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="action-bar">
+            <a href="#" class="action-btn view needs-selection is-disabled" id="btn-view-floors">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                    <path d="M3 9h18M9 21V9"></path>
+                </svg>
+                View Floors
+            </a>
+            <a href="#" class="action-btn view needs-selection is-disabled" id="btn-view-rates">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                View Rates
+            </a>
+            <button type="button" class="action-btn edit needs-selection is-disabled" id="btn-edit-facility">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                </svg>
+                Edit Facility
+            </button>
+            <a href="{{ url_for('admin.Remove_facility') }}" class="action-btn remove needs-selection is-disabled"
+                id="btn-remove-facility">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                </svg>
+                Remove Facility
+            </a>
+            <button type="button" class="action-btn primary" id="btn-add-facility">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add Facility
+            </button>
+        </div>
+
+        <p class="hint">Check one facility above to enable <b>View Floors</b>, <b>View Rates</b>, <b>Edit
+                Facility</b>, or <b>Remove Facility</b>.</p>
+    </main>
+
+    <!-- Hidden form used by Remove Facility, backed by Remove_Fal_Form (gives us hidden_tag() for CSRF) -->
+    <form id="remove-facility-form" action="{{ url_for('admin.Remove_facility') }}" method="POST" style="display:none;">
+        {{ remove_form.csrf_token }}
+        {{ remove_form.facility_id(id="remove-facility-facility-id") }}
+    </form>
+
+    <!-- Add facility modal, backed by Add_Fal_Form -->
+    <div class="modal-backdrop" id="add-facility-backdrop">
+        <div class="modal">
+            <h2>Add Facility</h2>
+            <form action="{{ url_for('admin.Add_facility') }}" method="POST">
+                {{ add_fal_form.hidden_tag() }}
+
+                {{ add_fal_form.name.label }}
+                {{ add_fal_form.name(id="add-facility-name") }}
+                {% if add_fal_form.name.errors %}
+                <ul class="field-errors">
+                    {% for error in add_fal_form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {{ add_fal_form.address.label }}
+                {{ add_fal_form.address(rows="4", id="add-facility-address") }}
+                {% if add_fal_form.address.errors %}
+                <ul class="field-errors">
+                    {% for error in add_fal_form.address.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-cancel-add">Cancel</button>
+                    {{ add_fal_form.submit(class_="action-btn primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit facility modal, backed by Edit_fal_Form -->
+    <div class="modal-backdrop" id="edit-facility-backdrop">
+        <div class="modal">
+            <h2>Edit Facility</h2>
+            <form action="{{ url_for('admin.Edit_facility') }}" method="POST">
+                {{ edit_fal_form.csrf_token }}
+                {{ edit_fal_form.facility_id(id="edit-facility-facility-id") }}
+
+                {{ edit_fal_form.name.label }}
+                {{ edit_fal_form.name(id="edit-facility-name") }}
+                {% if edit_fal_form.name.errors %}
+                <ul class="field-errors">
+                    {% for error in edit_fal_form.name.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {{ edit_fal_form.address.label }}
+                {{ edit_fal_form.address(rows="4", id="edit-facility-address") }}
+                {% if edit_fal_form.address.errors %}
+                <ul class="field-errors">
+                    {% for error in edit_fal_form.address.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-cancel-edit">Cancel</button>
+                    {{ edit_fal_form.submit(class_="action-btn primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static',filename = 'js/admin_dashboard.js') }}"></script>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category,message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html> 

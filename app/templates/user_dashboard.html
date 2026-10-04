@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — User Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/user_dashboard.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <a href="{{ url_for('user.user_dashboard') }}" class="brand-link">
+                <div class="brand-badge">P</div>
+                <div class="brand-word">VPARK</div>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <div class="user-tag">User — {{ current_user if current_user is defined else "" }}</div>
+
+            <div class="profile-menu" id="profile-menu">
+                <button type="button" class="profile-btn" id="profile-btn" aria-label="User Profile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="{{ url_for('user.User_profile') }}" class="dropdown-item">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="page-head">
+            <div>
+                <p class="kicker">Driver Portal</p>
+                <h1>Welcome, {{ current_user if current_user is defined else "Driver" }}</h1>
+                <p>Find parking slots across available facilities, manage your garage, and track live parking sessions.</p>
+            </div>
+        </div>
+
+        <!-- Quick Facility Search -->
+        <div class="search-section">
+            <form class="quick-search-bar" action="{{ url_for('user.Search_facility') }}" method="GET">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" class="search-icon">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" name="search_id" class="search-input" placeholder="Search facilities by name or address…" required>
+                <button type="submit" class="action-btn primary">
+                    Find Slots
+                </button>
+            </form>
+        </div>
+
+        <!-- Quick Navigation Cards Grid -->
+        <div class="dashboard-grid">
+            <!-- Card 1: Find Parking -->
+            <div class="dash-card feature-card">
+                <div class="dash-card-icon highlight">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9 17V7h4a3 3 0 0 1 0 6H9"></path>
+                    </svg>
+                </div>
+                <div class="dash-card-content">
+                    <h2 class="dash-card-title">Find Parking</h2>
+                    <p class="dash-card-desc">Browse facilities, view available vacant slots in real time, check hourly rates, and reserve a spot.</p>
+                </div>
+                <div class="dash-card-actions">
+                    <a href="{{ url_for('user.Search_facility') }}" class="action-btn primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        Search Facilities
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 2: Vehicles -->
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </div>
+                <div class="dash-card-content">
+                    <h2 class="dash-card-title">My Vehicles</h2>
+                    <p class="dash-card-desc">Add, view, or remove vehicles linked to your account. Set registration details and vehicle types.</p>
+                </div>
+                <div class="dash-card-actions">
+                    <a href="{{ url_for('user.Fetch_vehicles') }}" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Manage Vehicles
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Sessions -->
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="dash-card-content">
+                    <h2 class="dash-card-title">Parking Sessions</h2>
+                    <p class="dash-card-desc">Monitor your active parking sessions, check current duration, calculate costs, and check out when done.</p>
+                </div>
+                <div class="dash-card-actions">
+                    <a href="{{ url_for('user.Fetch_sessions') }}" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                        View Sessions
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 4: Profile -->
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="dash-card-content">
+                    <h2 class="dash-card-title">Profile & Settings</h2>
+                    <p class="dash-card-desc">Review your registered contact details, view account security status, and manage profile settings.</p>
+                </div>
+                <div class="dash-card-actions">
+                    <a href="{{ url_for('user.User_profile') }}" class="action-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                        </svg>
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename = 'js/user_dashboard.js') }}"></script>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — Parking Rates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <div class="brand-badge">P</div>
+            <div class="brand-word">VPARK</div>
+        </div>
+        <div class="admin-tag">Admin — {{ current_user if current_user is defined else "" }}</div>
+    </header>
+
+    <main data-facility-id="{{ facility.facility_id }}">
+        <div class="page-head">
+            <div>
+                <a href="{{ url_for('admin.admin_dashboard') }}" class="back-link">&larr; Back to Facilities</a>
+                <p class="kicker">{{ facility.facility_name }}</p>
+                <h1>Parking Rates</h1>
+                <p>Select a rate to remove it, or add a new vehicle type below.</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="select-col"></th>
+                        <th>Vehicle Type</th>
+                        <th>Rate / Hour</th>
+                    </tr>
+                </thead>
+                <tbody id="rate-body">
+                    {% for rate in rates %}
+                    <tr data-rate-id="{{ rate.rate_id }}">
+                        <td>
+                            <input type="checkbox" class="row-select" name="rate_select"
+                                value="{{ rate.rate_id }}">
+                        </td>
+                        <td>
+                            <div class="facility-name">{{ rate.vehicle_type }}</div>
+                            <div class="facility-sub">ID #{{ rate.rate_id }}</div>
+                        </td>
+                        <td>&#8377;{{ rate.rate_per_hour }} / hr</td>
+                    </tr>
+                    {% else %}
+                    <tr class="empty-row">
+                        <td colspan="3">No rates yet — add the first one below.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="action-bar">
+            <button type="button" class="action-btn primary" id="btn-add-rate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M12 5v14M5 12h14"></path>
+                </svg>
+                Add Rate
+            </button>
+            <a href="#" class="action-btn remove needs-selection is-disabled" id="btn-remove-rate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M3 6h18"></path>
+                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                </svg>
+                Remove Rate
+            </a>
+        </div>
+
+        <p class="hint">Check one rate above to enable <b>Remove Rate</b>.</p>
+    </main>
+
+    <!-- Hidden form used by Remove Rate, backed by Remove_Rate_Form -->
+    <form id="remove-rate-form" action="{{ url_for('admin.Remove_rate', facility_id=facility.facility_id) }}"
+        method="POST" style="display:none;">
+        {{ remove_rate_form.csrf_token }}
+        {{ remove_rate_form.rate_id(id="remove-rate-rate-id") }}
+    </form>
+
+    <!-- Add Rate modal, backed by Add_Rate_Form -->
+    <div class="modal-backdrop" id="add-rate-backdrop">
+        <div class="modal">
+            <h2>Add Rate</h2>
+            <form action="{{ url_for('admin.Add_rate', facility_id=facility.facility_id) }}" method="POST">
+                {{ add_rate_form.hidden_tag() }}
+
+                {{ add_rate_form.vehicle_type.label }}
+                {{ add_rate_form.vehicle_type(id="add-rate-vehicle-type", placeholder="e.g. Car, Bike, Truck") }}
+                {% if add_rate_form.vehicle_type.errors %}
+                <ul class="field-errors">
+                    {% for error in add_rate_form.vehicle_type.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                {{ add_rate_form.rate_per_hour.label }}
+                {{ add_rate_form.rate_per_hour(id="add-rate-per-hour", placeholder="e.g. 50") }}
+                {% if add_rate_form.rate_per_hour.errors %}
+                <ul class="field-errors">
+                    {% for error in add_rate_form.rate_per_hour.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-cancel-add-rate">Cancel</button>
+                    {{ add_rate_form.submit(class_="action-btn primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/rates.js') }}"></script>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

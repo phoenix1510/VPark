@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — My Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/admin_profile.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="brand">
+            <a href="{{ url_for('admin.admin_dashboard') }}" class="brand-link">
+                <div class="brand-badge">P</div>
+                <div class="brand-word">VPARK</div>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <div class="admin-tag">Admin — {{ current_user.name if current_user is defined else "" }}</div>
+
+            <div class="profile-menu" id="profile-menu">
+                <button type="button" class="profile-btn" id="profile-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="{{ url_for('admin.Profile') }}" class="dropdown-item">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="page-head">
+            <div>
+                <p class="kicker">Account</p>
+                <h1>Your Profile</h1>
+                <p>View and update your account details.</p>
+            </div>
+            <a href="{{ url_for('admin.admin_dashboard') }}" class="action-btn back">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <div class="profile-card">
+            <div class="profile-card-head">
+                <div class="avatar">{{ (current_user.name[0] | upper) if current_user is defined and current_user.name else "?" }}</div>
+                <div class="profile-card-head-text">
+                    <div class="profile-name" id="display-name">{{ current_user.name if current_user is defined else "" }}</div>
+                    <span class="role-badge role-{{ current_user.role if current_user is defined else 'user' }}">
+                        {{ current_user.role if current_user is defined else "" }}
+                    </span>
+                </div>
+                <button type="button" class="action-btn" id="btn-edit-profile">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 20h9"></path>
+                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                    </svg>
+                    Edit
+                </button>
+            </div>
+
+            <!-- Read-only view -->
+            <dl class="profile-details" id="profile-view">
+                <div class="detail-row">
+                    <dt>User ID</dt>
+                    <dd>#{{ current_user.user_id if current_user is defined else "" }}</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Full Name</dt>
+                    <dd>{{ current_user.name if current_user is defined else "" }}</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Email</dt>
+                    <dd>{{ current_user.email if current_user is defined else "" }}</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Phone Number</dt>
+                    <dd>{{ current_user.phone_number if current_user is defined else "" }}</dd>
+                </div>
+                <div class="detail-row">
+                    <dt>Role</dt>
+                    <dd class="capitalize">{{ current_user.role if current_user is defined else "" }}</dd>
+                </div>
+            </dl>
+
+            <!-- Editable form, hidden until "Edit" is clicked -->
+            <form class="profile-edit-form" id="profile-edit-form" action="{{ url_for('admin.Profile') }}" method="POST">
+                <div class="field-group">
+                    <label>User ID</label>
+                    <input type="text" value="#{{ current_user.user_id if current_user is defined else '' }}" disabled>
+                </div>
+
+                <div class="field-group">
+                    <label for="edit-name">Full Name</label>
+                    <input type="text" id="edit-name" name="name"
+                        value="{{ current_user.name if current_user is defined else '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="edit-email">Email</label>
+                    <input type="email" id="edit-email" name="email"
+                        value="{{ current_user.email if current_user is defined else '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="edit-phone">Phone Number</label>
+                    <input type="text" id="edit-phone" name="phone_number"
+                        value="{{ current_user.phone_number if current_user is defined else '' }}" required>
+                </div>
+
+                <div class="field-group">
+                    <label>Role</label>
+                    <input type="text" value="{{ current_user.role if current_user is defined else '' }}" disabled>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-cancel-edit-profile">Cancel</button>
+                    <button type="submit" class="action-btn primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="danger-zone">
+            <div class="danger-zone-header">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                Danger Zone
+            </div>
+            <div class="danger-zone-body">
+                <div>
+                    <p class="danger-label">Delete this account</p>
+                    <p class="danger-desc">Permanently remove your admin account and all associated data. This action cannot be undone.</p>
+                </div>
+                <button type="button" class="action-btn danger" id="btn-open-delete-modal">Delete Account</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal-overlay" id="delete-modal-overlay" aria-modal="true" role="dialog" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                </svg>
+            </div>
+            <h2 class="modal-title" id="modal-title">Delete your account?</h2>
+            <p class="modal-body">This will permanently delete your admin account and all your data. You will be logged out immediately. <strong>This cannot be undone.</strong></p>
+            <form action="{{ url_for('admin.Remove_admin') }}" method="POST" id="delete-admin-form">
+                {{ remove_admin_form.hidden_tag() }}
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-close-delete-modal">Cancel</button>
+                    <button type="submit" class="action-btn danger">Yes, delete my account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename = 'js/admin_profile.js') }}"></script>
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+</body>
+
+</html>

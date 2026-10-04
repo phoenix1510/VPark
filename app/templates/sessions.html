@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPark — My Sessions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sessions.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <a href="{{ url_for('user.user_dashboard') }}" class="brand-link">
+                <div class="brand-badge">P</div>
+                <div class="brand-word">VPARK</div>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="profile-menu" id="profile-menu">
+                <button type="button" class="profile-btn" id="profile-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
+                <div class="profile-dropdown" id="profile-dropdown">
+                    <a href="{{ url_for('user.User_profile') }}" class="dropdown-item">Profile</a>
+                    <a href="{{ url_for('auth.logout') }}" class="dropdown-item logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <ul class="flash">
+            {% for category, message in messages %}
+            <li class="flash-{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <div class="page-head">
+            <div>
+                <p class="kicker">Activity</p>
+                <h1>My Sessions</h1>
+                <p>View and end your active parking sessions.</p>
+            </div>
+            <div class="page-head-actions">
+                <a href="{{ url_for('user.user_dashboard') }}" class="action-btn back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('user.Search_facility') }}" class="action-btn primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    Park Now
+                </a>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Session ID</th>
+                        <th>Slot</th>
+                        <th>Entry Time</th>
+                        <th>Rate / hr</th>
+                        <th>Status</th>
+                        <th class="action-col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if sessions %}
+                    {% for s in sessions %}
+                    {% if s %}
+                    <tr>
+                        <td>#{{ s.session_id }}</td>
+                        <td>Slot {{ s.slot_id }}</td>
+                        <td>{{ s.entry_time }}</td>
+                        <td>₹{{ s.rate_per_hour_used if s.rate_per_hour_used is defined and s.rate_per_hour_used is not none else (s.rate_per_hour_user if s.rate_per_hour_user is defined else 0) }}/hr</td>
+                        <td>
+                            <span class="status-badge status-{{ s.status | lower }}">{{ s.status }}</span>
+                        </td>
+                        <td>
+                            {% if s.status == 'active' %}
+                            <button type="button" class="action-btn remove btn-open-finish-modal"
+                                data-session-id="{{ s.session_id }}">
+                                End Session
+                            </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <tr class="empty-row">
+                        <td colspan="6">No sessions found. <a href="{{ url_for('user.Search_facility') }}">Start parking</a> to see your sessions here.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Finish session modal -->
+    <div class="modal-backdrop" id="finish-modal-backdrop">
+        <div class="modal">
+            <h2>End Session</h2>
+            <p class="modal-desc">End parking session <strong>#<span id="finish-session-id-display"></span></strong>? Your total will be calculated based on the time parked.</p>
+            <form action="{{ url_for('user.Finish_parking') }}" method="POST" id="finish-session-form">
+                {{ finish_parking_form.csrf_token() }}
+                {{ finish_parking_form.session_id(id='finish-session-id') }}
+                <div class="modal-actions">
+                    <button type="button" class="action-btn" id="btn-close-finish-modal">Cancel</button>
+                    <button type="submit" class="action-btn primary">End Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Summary modal (shown after AJAX response from Finish_parking) -->
+    <div class="modal-backdrop" id="summary-modal-backdrop">
+        <div class="modal">
+            <div class="summary-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <h2>Session Ended</h2>
+            <div class="summary-grid">
+                <div class="summary-row"><span>Duration</span><strong id="sum-duration"></strong></div>
+                <div class="summary-row"><span>Hours billed</span><strong id="sum-hours"></strong></div>
+                <div class="summary-row total-row"><span>Total Amount</span><strong id="sum-amount"></strong></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="action-btn primary" id="btn-close-summary">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/sessions.js') }}"></script>
+</body>
+</html>
