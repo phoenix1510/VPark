@@ -1,0 +1,301 @@
+:root {
+    --asphalt: #1c1f22;
+    --asphalt-2: #24282c;
+    --concrete: #ece9e2;
+    --concrete-dim: #b7b4ac;
+    --yellow: #f4c430;
+    --yellow-dim: #d9ad1f;
+    --steel: #6a8caf;
+    --steel-dim: #46617c;
+    --line: rgba(236, 233, 226, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--asphalt);
+    color: var(--concrete);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Perspective bay-line backdrop */
+.bay-field {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+header {
+    border: 1px solid var(--line);
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.75rem clamp(1.25rem, 5vw, 3.5rem);
+}
+
+.mark {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.mark-badge {
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 2px solid var(--yellow);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--yellow);
+    letter-spacing: 0.02em;
+}
+
+.mark-word {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+}
+
+.mark-word span {
+    color: var(--concrete-dim);
+    font-weight: 500;
+}
+
+.bay-tag {
+    font-size: 0.85rem;
+    color: var(--concrete-dim);
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
+}
+
+.bay-tag b {
+    color: var(--yellow);
+    font-weight: 600;
+}
+
+main {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem clamp(1.25rem, 6vw, 3.5rem) 4rem;
+}
+
+.kicker {
+    font-size: 0.95rem;
+    color: var(--yellow);
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height: 1.05;
+    margin: 0 0 1.1rem;
+    max-width: 16ch;
+}
+
+h1 em {
+    font-style: normal;
+    color: var(--yellow);
+}
+
+.lede {
+    max-width: 44ch;
+    font-size: 1.08rem;
+    line-height: 1.6;
+    color: var(--concrete-dim);
+    margin: 0 0 3rem;
+}
+
+.gate-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 640px;
+}
+
+.ticket {
+    position: relative;
+    flex: 1 1 260px;
+    min-width: 250px;
+    text-align: left;
+    text-decoration: none;
+    color: inherit;
+    background: var(--asphalt-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.6rem 1.6rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.ticket::after {
+    content: "";
+    position: absolute;
+    top: 0.9rem;
+    bottom: 0.9rem;
+    right: -1px;
+    width: 1px;
+    background-image: repeating-linear-gradient(to bottom, var(--line) 0 6px, transparent 6px 12px);
+}
+
+.ticket:last-child::after {
+    display: none;
+}
+
+.ticket:hover {
+    transform: translateY(-3px);
+}
+
+.ticket-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ticket-icon svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.ticket.user .ticket-icon {
+    background: rgba(244, 196, 48, 0.14);
+}
+
+.ticket.user .ticket-icon svg {
+    stroke: var(--yellow);
+}
+
+.ticket.user:hover {
+    border-color: var(--yellow-dim);
+}
+
+.ticket.admin .ticket-icon {
+    background: rgba(106, 140, 175, 0.16);
+}
+
+.ticket.admin .ticket-icon svg {
+    stroke: var(--steel);
+}
+
+.ticket.admin:hover {
+    border-color: var(--steel);
+}
+
+.ticket-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    letter-spacing: 0.01em;
+}
+
+.ticket-sub {
+    font-size: 0.9rem;
+    color: var(--concrete-dim);
+    line-height: 1.45;
+    margin-top: -0.4rem;
+}
+
+.ticket-go {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.ticket.user .ticket-go {
+    color: var(--yellow);
+}
+
+.ticket.admin .ticket-go {
+    color: var(--steel);
+}
+
+.ticket-go svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    transition: transform 0.18s ease;
+}
+
+.ticket:hover .ticket-go svg {
+    transform: translateX(3px);
+}
+
+footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.4rem 1rem 1.8rem;
+    font-size: 0.8rem;
+    color: var(--concrete-dim);
+    border-top: 1px solid var(--line);
+}
+
+footer .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--yellow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .ticket,
+    .ticket-go svg {
+        transition: none;
+    }
+}
+
+@media (max-width: 520px) {
+    .gate-row {
+        flex-direction: column;
+    }
+
+    .ticket::after {
+        display: none;
+    }
+}

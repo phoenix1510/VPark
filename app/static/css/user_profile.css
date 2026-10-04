@@ -1,0 +1,501 @@
+:root {
+    --asphalt: #1c1f22;
+    --asphalt-2: #24282c;
+    --asphalt-3: #2b3035;
+    --concrete: #ece9e2;
+    --concrete-dim: #b7b4ac;
+    --yellow: #f4c430;
+    --yellow-dim: #d9ad1f;
+    --steel: #6a8caf;
+    --steel-dim: #46617c;
+    --red: #e2836b;
+    --green: #6bbf8e;
+    --line: rgba(236, 233, 226, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--asphalt);
+    color: var(--concrete);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem clamp(1.25rem, 4vw, 3rem);
+    border-bottom: 1px solid var(--line);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-menu {
+    position: relative;
+}
+
+.profile-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: var(--concrete);
+}
+
+.profile-btn:hover {
+    background: rgba(236, 233, 226, 0.08);
+}
+
+.profile-btn svg {
+    width: 22px;
+    height: 22px;
+}
+
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: #fff;
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    min-width: 140px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    z-index: 20;
+}
+
+.profile-dropdown.open {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 14px;
+    text-decoration: none;
+    color: #222;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #f5f5f5;
+}
+
+.dropdown-item.logout {
+    color: #c0392b;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: inherit;
+}
+
+.brand-badge {
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 2px solid var(--yellow);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--yellow);
+}
+
+.brand-word {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+}
+
+.user-tag {
+    font-size: 0.85rem;
+    color: var(--yellow);
+    border: 1px solid var(--yellow-dim);
+    background: rgba(244, 196, 48, 0.1);
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 4rem;
+}
+
+.page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+}
+
+.page-head .kicker {
+    font-size: 0.9rem;
+    color: var(--yellow);
+    font-weight: 500;
+    margin: 0 0 0.4rem;
+}
+
+.page-head h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    margin: 0;
+}
+
+.page-head p {
+    color: var(--concrete-dim);
+    font-size: 0.92rem;
+    margin: 0.4rem 0 0;
+}
+
+/* ---- action button ---- */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    padding: 0.7rem 1.2rem;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--asphalt-2);
+    color: var(--concrete);
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.action-btn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.action-btn.primary {
+    background: var(--yellow);
+    color: var(--asphalt);
+    border-color: var(--yellow);
+}
+
+.action-btn.primary:hover {
+    background: var(--yellow-dim);
+}
+
+.action-btn.back:hover {
+    border-color: var(--steel);
+    color: var(--steel);
+}
+
+.action-btn.danger {
+    background: rgba(226, 131, 107, 0.12);
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.action-btn.danger:hover {
+    background: var(--red);
+    color: var(--asphalt);
+}
+
+/* ---- flash messages ---- */
+.flash {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.flash li {
+    padding: 0.75rem 1rem;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--asphalt-2);
+    color: var(--concrete-dim);
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+}
+
+.flash .flash-success {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.flash .flash-danger {
+    border-color: var(--red);
+    color: var(--red);
+}
+
+/* ---- profile card ---- */
+.profile-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--asphalt-2);
+    padding: 1.75rem;
+}
+
+.profile-card-head {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.avatar {
+    width: 3.2rem;
+    height: 3.2rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: rgba(244, 196, 48, 0.12);
+    border: 2px solid var(--yellow);
+    color: var(--yellow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.profile-card-head-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.profile-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.role-badge {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--steel-dim);
+    color: var(--steel);
+    background: rgba(106, 140, 175, 0.1);
+}
+
+/* ---- read-only details ---- */
+.profile-details {
+    margin: 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row dt {
+    font-size: 0.82rem;
+    color: var(--concrete-dim);
+    font-weight: 500;
+}
+
+.detail-row dd {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: right;
+}
+
+.detail-row dd.capitalize {
+    text-transform: capitalize;
+}
+
+/* ---- danger zone card ---- */
+.danger-zone {
+    margin-top: 1.5rem;
+    border: 1px solid rgba(226, 131, 107, 0.35);
+    border-radius: 10px;
+    background: var(--asphalt-2);
+    overflow: hidden;
+}
+
+.danger-zone-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--red);
+    background: rgba(226, 131, 107, 0.08);
+    border-bottom: 1px solid rgba(226, 131, 107, 0.2);
+}
+
+.danger-zone-header svg {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.danger-zone-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
+    flex-wrap: wrap;
+}
+
+.danger-label {
+    margin: 0 0 0.3rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.danger-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--concrete-dim);
+}
+
+/* ---- confirmation modal ---- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(3px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal-box {
+    background: var(--asphalt-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+}
+
+.modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    background: rgba(226, 131, 107, 0.12);
+    border: 1px solid rgba(226, 131, 107, 0.35);
+    color: var(--red);
+}
+
+.modal-icon svg {
+    width: 1.4rem;
+    height: 1.4rem;
+}
+
+.modal-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 0.75rem;
+}
+
+.modal-body {
+    font-size: 0.9rem;
+    color: var(--concrete-dim);
+    margin: 0 0 1.5rem;
+    line-height: 1.6;
+}
+
+.modal-body strong {
+    color: var(--concrete);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+}
+
+.modal-actions .action-btn {
+    flex: 1;
+    justify-content: center;
+}
+
+@media (max-width: 480px) {
+    .detail-row {
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .detail-row dd {
+        text-align: left;
+    }
+}

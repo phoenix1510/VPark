@@ -1,0 +1,49 @@
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: capitalize;
+}
+
+.status-available {
+    background: #e3f7e9;
+    color: #1c7c3f;
+}
+
+.status-occupied {
+    background: #fdeaea;
+    color: #c0392b;
+}
+
+.status-reserved {
+    background: #fff4e0;
+    color: #b8790a;
+}
+
+.status-out-of-service {
+    background: #eceff1;
+    color: #546e7a;
+}
+
+.modal select#edit-status-value {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    border: 1px solid #d7dbe0;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    background: #fff;
+}
+
+.modal label[for="edit-status-value"] {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3a3f47;
+}
